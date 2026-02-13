@@ -71,8 +71,13 @@ async def login(user:UserLoginSchema, db: Session = Depends(get_db)):
     access_token = create_access_token({'sub': user_db.username})
     refresh_token = create_refresh_token({'sub': user_db.username})
 
-    token_db = RefreshToken(user_id=user_db.id, token=refresh_token)
-    db.add(token_db)
+    token_db = db.query(RefreshToken).filter(RefreshToken.user_id == user_db.id).first()
+    if token_db:
+        token_db.token = refresh_token
+    else:
+        token_db = RefreshToken(user_id=user_db.id, token=refresh_token)
+        db.add(token_db)
+
     db.commit()
 
     return {'access_token': access_token, 'refresh_token': refresh_token, 'token_type': 'Bearer'}
