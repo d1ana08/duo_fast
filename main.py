@@ -1,6 +1,8 @@
 import uvicorn
 from fastapi import FastAPI
 from duolingo_app.api.chat_message import chat_router
+from duolingo_app.admin.setup import setup_admin
+
 from duolingo_app.api import (
     user,
     user_progress,
@@ -41,7 +43,7 @@ duolingo_app.include_router(paid_sub.paid_subscription_router)
 duolingo_app.include_router(invite.invited_friend_router)
 duolingo_app.include_router(auth.auth_router)
 
-
+setup_admin(duolingo_app)
 
 if __name__ == '__main__':
     uvicorn.run(duolingo_app, host='127.0.0.1', port=8003)
